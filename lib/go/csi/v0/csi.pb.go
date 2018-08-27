@@ -61,57 +61,52 @@ func (x PluginCapability_Service_Type) String() string {
 	return proto.EnumName(PluginCapability_Service_Type_name, int32(x))
 }
 func (PluginCapability_Service_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{4, 0, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{4, 0, 0}
 }
 
 type PluginCapability_VolumeExpansion_Type int32
 
 const (
 	PluginCapability_VolumeExpansion_UNKNOWN PluginCapability_VolumeExpansion_Type = 0
-	// ONLINE indicates that the volume can be expanded
-	// when published to a node.
-	// When a Plugin implements this capability it MUST implement
-	// either EXPAND_VOLUME controller capability or EXPAND_VOLUME
-	// node capability or both.
-	// When a plugin has this capability and also
-	// has EXPAND_VOLUME controller capability then the plugin
-	// MUST support expansion of controller published volumes via
-	// ControllerExpandVolume.
-	// A plugin MAY support this capability if it does not have
-	// controller EXPAND_VOLUME capability but only node EXPAND_VOLUME
-	// capability.
-	// Example 1:
-	//    Given a shared filesystem volume (ex. GlusterFs) -
-	//    the Plugin will set ONLINE capability
-	//    and implement ControllerExpandVolume but not
-	//    NodeExpandVolume.
-	// Example 2:
-	//    Given a block storage volume type(ex. EBS) -
-	//    the Plugin will set ONLINE capability
-	//    and implement ControllerExpandVolume and
-	//    NodeExpandVolume.
-	// Example 3:
-	//    Given a volume that is only expandable on node,
-	//    the Plugin will set ONLINE capability
-	//    and implement NodeExpandVolume but not
-	//    ControllerExpandVolume.
+	// ONLINE indicates that volumes may be expanded when published to
+	// a node. When a Plugin implements this capability it MUST
+	// implement either the EXPAND_VOLUME controller capability or the
+	// EXPAND_VOLUME node capability or both. When a plugin supports
+	// ONLINE volume expansion and also has the EXPAND_VOLUME
+	// controller capability then the plugin MUST support expansion of
+	// controller-published volumes via ControllerExpandVolume. When a
+	// plugin supports ONLINE volume expansion and also has the
+	// EXPAND_VOLUME node capability then the plugin MAY support
+	// expansion of node-published volume via NodeExpandVolume.
+	//
+	// Example 1: Given a shared filesystem volume (e.g. GlusterFs),
+	//   the Plugin may set the ONLINE volume expansion capability and
+	//   implement ControllerExpandVolume but not NodeExpandVolume.
+	//
+	// Example 2: Given a block storage volume type (e.g. EBS), the
+	//   Plugin may set the ONLINE volume expansion capability and
+	//   implement both ControllerExpandVolume and NodeExpandVolume.
+	//
+	// Example 3: Given a Plugin that supports volume expansion only
+	//   on upon a node, the Plugin may set the ONLINE volume
+	//   expansion capability and implement NodeExpandVolume but not
+	//   ControllerExpandVolume.
 	PluginCapability_VolumeExpansion_ONLINE PluginCapability_VolumeExpansion_Type = 1
-	// OFFLINE indicates that the volume can not
-	// be expanded when controller published to a node.
-	// When a Plugin implements this capability it MUST implement
-	// either EXPAND_VOLUME controller capability or EXPAND_VOLUME
-	// node capability or both.
-	// Example 1:
-	//    Given a block storage volume type(ex. Azure Disk) -
-	//    that does not support expansion of controller published
-	//    volumes. The Plugin will set OFFLINE
-	//    capability and implement ControllerExpandVolume and
-	//    NodeExpandVolume.
-	// Example 2:
-	//    Given a volume type that only has node
-	//    EXPAND_VOLUME capability. The Plugin MUST NOT
-	//    set OFFLINE capability and SHOULD
-	//    instead set ONLINE capability.
+	// OFFLINE indicates that volumes cannot be expanded upon being
+	// controller-published. When a plugin supports OFFLINE volume
+	// expansion it MUST implement either the EXPAND_VOLUME controller
+	// capability or the EXPAND_VOLUME node capability or both.
+	//
+	// Example 1: Given a block storage volume type (e.g. Azure Disk)
+	//   that does not support expansion of "node-attached" (i.e.
+	//   controller-published) volumes, the Plugin may indicate
+	//   OFFLINE volume expansion support and implement both
+	//   ControllerExpandVolume and NodeExpandVolume.
+	//
+	// Example 2: Given a Plugin that only has the node EXPAND_VOLUME
+	//   capability, the Plugin MUST NOT indicate OFFLINE volume
+	//   expansion and SHOULD instead indicate ONLINE volume
+	//   expansion.
 	PluginCapability_VolumeExpansion_OFFLINE PluginCapability_VolumeExpansion_Type = 2
 )
 
@@ -130,7 +125,7 @@ func (x PluginCapability_VolumeExpansion_Type) String() string {
 	return proto.EnumName(PluginCapability_VolumeExpansion_Type_name, int32(x))
 }
 func (PluginCapability_VolumeExpansion_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{4, 1, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{4, 1, 0}
 }
 
 type VolumeCapability_AccessMode_Mode int32
@@ -174,7 +169,7 @@ func (x VolumeCapability_AccessMode_Mode) String() string {
 	return proto.EnumName(VolumeCapability_AccessMode_Mode_name, int32(x))
 }
 func (VolumeCapability_AccessMode_Mode) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{10, 2, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{10, 2, 0}
 }
 
 type ControllerServiceCapability_RPC_Type int32
@@ -195,7 +190,8 @@ const (
 	// with the snapshot_id as the filter to query whether the
 	// uploading process is complete or not.
 	ControllerServiceCapability_RPC_LIST_SNAPSHOTS ControllerServiceCapability_RPC_Type = 6
-	ControllerServiceCapability_RPC_EXPAND_VOLUME  ControllerServiceCapability_RPC_Type = 7
+	// See VolumeExpansion for details.
+	ControllerServiceCapability_RPC_EXPAND_VOLUME ControllerServiceCapability_RPC_Type = 7
 )
 
 var ControllerServiceCapability_RPC_Type_name = map[int32]string{
@@ -223,7 +219,7 @@ func (x ControllerServiceCapability_RPC_Type) String() string {
 	return proto.EnumName(ControllerServiceCapability_RPC_Type_name, int32(x))
 }
 func (ControllerServiceCapability_RPC_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{29, 0, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{29, 0, 0}
 }
 
 type SnapshotStatus_Type int32
@@ -265,7 +261,7 @@ func (x SnapshotStatus_Type) String() string {
 	return proto.EnumName(SnapshotStatus_Type_name, int32(x))
 }
 func (SnapshotStatus_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{33, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{33, 0}
 }
 
 type VolumeUsage_Unit int32
@@ -291,7 +287,7 @@ func (x VolumeUsage_Unit) String() string {
 	return proto.EnumName(VolumeUsage_Unit_name, int32(x))
 }
 func (VolumeUsage_Unit) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{50, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{50, 0}
 }
 
 type NodeServiceCapability_RPC_Type int32
@@ -303,7 +299,8 @@ const (
 	// then it MUST implement NodeGetVolumeStats RPC
 	// call for fetching volume statistics.
 	NodeServiceCapability_RPC_GET_VOLUME_STATS NodeServiceCapability_RPC_Type = 2
-	NodeServiceCapability_RPC_EXPAND_VOLUME    NodeServiceCapability_RPC_Type = 3
+	// See VolumeExpansion for details.
+	NodeServiceCapability_RPC_EXPAND_VOLUME NodeServiceCapability_RPC_Type = 3
 )
 
 var NodeServiceCapability_RPC_Type_name = map[int32]string{
@@ -323,7 +320,7 @@ func (x NodeServiceCapability_RPC_Type) String() string {
 	return proto.EnumName(NodeServiceCapability_RPC_Type_name, int32(x))
 }
 func (NodeServiceCapability_RPC_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{55, 0, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{55, 0, 0}
 }
 
 type GetPluginInfoRequest struct {
@@ -336,7 +333,7 @@ func (m *GetPluginInfoRequest) Reset()         { *m = GetPluginInfoRequest{} }
 func (m *GetPluginInfoRequest) String() string { return proto.CompactTextString(m) }
 func (*GetPluginInfoRequest) ProtoMessage()    {}
 func (*GetPluginInfoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{0}
 }
 func (m *GetPluginInfoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetPluginInfoRequest.Unmarshal(m, b)
@@ -378,7 +375,7 @@ func (m *GetPluginInfoResponse) Reset()         { *m = GetPluginInfoResponse{} }
 func (m *GetPluginInfoResponse) String() string { return proto.CompactTextString(m) }
 func (*GetPluginInfoResponse) ProtoMessage()    {}
 func (*GetPluginInfoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{1}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{1}
 }
 func (m *GetPluginInfoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetPluginInfoResponse.Unmarshal(m, b)
@@ -429,7 +426,7 @@ func (m *GetPluginCapabilitiesRequest) Reset()         { *m = GetPluginCapabilit
 func (m *GetPluginCapabilitiesRequest) String() string { return proto.CompactTextString(m) }
 func (*GetPluginCapabilitiesRequest) ProtoMessage()    {}
 func (*GetPluginCapabilitiesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{2}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{2}
 }
 func (m *GetPluginCapabilitiesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetPluginCapabilitiesRequest.Unmarshal(m, b)
@@ -462,7 +459,7 @@ func (m *GetPluginCapabilitiesResponse) Reset()         { *m = GetPluginCapabili
 func (m *GetPluginCapabilitiesResponse) String() string { return proto.CompactTextString(m) }
 func (*GetPluginCapabilitiesResponse) ProtoMessage()    {}
 func (*GetPluginCapabilitiesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{3}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{3}
 }
 func (m *GetPluginCapabilitiesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetPluginCapabilitiesResponse.Unmarshal(m, b)
@@ -504,7 +501,7 @@ func (m *PluginCapability) Reset()         { *m = PluginCapability{} }
 func (m *PluginCapability) String() string { return proto.CompactTextString(m) }
 func (*PluginCapability) ProtoMessage()    {}
 func (*PluginCapability) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{4}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{4}
 }
 func (m *PluginCapability) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PluginCapability.Unmarshal(m, b)
@@ -644,7 +641,7 @@ func (m *PluginCapability_Service) Reset()         { *m = PluginCapability_Servi
 func (m *PluginCapability_Service) String() string { return proto.CompactTextString(m) }
 func (*PluginCapability_Service) ProtoMessage()    {}
 func (*PluginCapability_Service) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{4, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{4, 0}
 }
 func (m *PluginCapability_Service) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PluginCapability_Service.Unmarshal(m, b)
@@ -681,7 +678,7 @@ func (m *PluginCapability_VolumeExpansion) Reset()         { *m = PluginCapabili
 func (m *PluginCapability_VolumeExpansion) String() string { return proto.CompactTextString(m) }
 func (*PluginCapability_VolumeExpansion) ProtoMessage()    {}
 func (*PluginCapability_VolumeExpansion) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{4, 1}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{4, 1}
 }
 func (m *PluginCapability_VolumeExpansion) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PluginCapability_VolumeExpansion.Unmarshal(m, b)
@@ -711,7 +708,7 @@ func (m *ProbeRequest) Reset()         { *m = ProbeRequest{} }
 func (m *ProbeRequest) String() string { return proto.CompactTextString(m) }
 func (*ProbeRequest) ProtoMessage()    {}
 func (*ProbeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{5}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{5}
 }
 func (m *ProbeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ProbeRequest.Unmarshal(m, b)
@@ -762,7 +759,7 @@ func (m *ProbeResponse) Reset()         { *m = ProbeResponse{} }
 func (m *ProbeResponse) String() string { return proto.CompactTextString(m) }
 func (*ProbeResponse) ProtoMessage()    {}
 func (*ProbeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{6}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{6}
 }
 func (m *ProbeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ProbeResponse.Unmarshal(m, b)
@@ -848,7 +845,7 @@ func (m *CreateVolumeRequest) Reset()         { *m = CreateVolumeRequest{} }
 func (m *CreateVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateVolumeRequest) ProtoMessage()    {}
 func (*CreateVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{7}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{7}
 }
 func (m *CreateVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateVolumeRequest.Unmarshal(m, b)
@@ -932,7 +929,7 @@ func (m *VolumeContentSource) Reset()         { *m = VolumeContentSource{} }
 func (m *VolumeContentSource) String() string { return proto.CompactTextString(m) }
 func (*VolumeContentSource) ProtoMessage()    {}
 func (*VolumeContentSource) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{8}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{8}
 }
 func (m *VolumeContentSource) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_VolumeContentSource.Unmarshal(m, b)
@@ -1046,7 +1043,7 @@ func (m *VolumeContentSource_SnapshotSource) Reset()         { *m = VolumeConten
 func (m *VolumeContentSource_SnapshotSource) String() string { return proto.CompactTextString(m) }
 func (*VolumeContentSource_SnapshotSource) ProtoMessage()    {}
 func (*VolumeContentSource_SnapshotSource) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{8, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{8, 0}
 }
 func (m *VolumeContentSource_SnapshotSource) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_VolumeContentSource_SnapshotSource.Unmarshal(m, b)
@@ -1087,7 +1084,7 @@ func (m *CreateVolumeResponse) Reset()         { *m = CreateVolumeResponse{} }
 func (m *CreateVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateVolumeResponse) ProtoMessage()    {}
 func (*CreateVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{9}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{9}
 }
 func (m *CreateVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateVolumeResponse.Unmarshal(m, b)
@@ -1134,7 +1131,7 @@ func (m *VolumeCapability) Reset()         { *m = VolumeCapability{} }
 func (m *VolumeCapability) String() string { return proto.CompactTextString(m) }
 func (*VolumeCapability) ProtoMessage()    {}
 func (*VolumeCapability) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{10}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{10}
 }
 func (m *VolumeCapability) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_VolumeCapability.Unmarshal(m, b)
@@ -1281,7 +1278,7 @@ func (m *VolumeCapability_BlockVolume) Reset()         { *m = VolumeCapability_B
 func (m *VolumeCapability_BlockVolume) String() string { return proto.CompactTextString(m) }
 func (*VolumeCapability_BlockVolume) ProtoMessage()    {}
 func (*VolumeCapability_BlockVolume) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{10, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{10, 0}
 }
 func (m *VolumeCapability_BlockVolume) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_VolumeCapability_BlockVolume.Unmarshal(m, b)
@@ -1321,7 +1318,7 @@ func (m *VolumeCapability_MountVolume) Reset()         { *m = VolumeCapability_M
 func (m *VolumeCapability_MountVolume) String() string { return proto.CompactTextString(m) }
 func (*VolumeCapability_MountVolume) ProtoMessage()    {}
 func (*VolumeCapability_MountVolume) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{10, 1}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{10, 1}
 }
 func (m *VolumeCapability_MountVolume) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_VolumeCapability_MountVolume.Unmarshal(m, b)
@@ -1368,7 +1365,7 @@ func (m *VolumeCapability_AccessMode) Reset()         { *m = VolumeCapability_Ac
 func (m *VolumeCapability_AccessMode) String() string { return proto.CompactTextString(m) }
 func (*VolumeCapability_AccessMode) ProtoMessage()    {}
 func (*VolumeCapability_AccessMode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{10, 2}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{10, 2}
 }
 func (m *VolumeCapability_AccessMode) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_VolumeCapability_AccessMode.Unmarshal(m, b)
@@ -1416,7 +1413,7 @@ func (m *CapacityRange) Reset()         { *m = CapacityRange{} }
 func (m *CapacityRange) String() string { return proto.CompactTextString(m) }
 func (*CapacityRange) ProtoMessage()    {}
 func (*CapacityRange) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{11}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{11}
 }
 func (m *CapacityRange) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CapacityRange.Unmarshal(m, b)
@@ -1509,7 +1506,7 @@ func (m *Volume) Reset()         { *m = Volume{} }
 func (m *Volume) String() string { return proto.CompactTextString(m) }
 func (*Volume) ProtoMessage()    {}
 func (*Volume) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{12}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{12}
 }
 func (m *Volume) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Volume.Unmarshal(m, b)
@@ -1701,7 +1698,7 @@ func (m *TopologyRequirement) Reset()         { *m = TopologyRequirement{} }
 func (m *TopologyRequirement) String() string { return proto.CompactTextString(m) }
 func (*TopologyRequirement) ProtoMessage()    {}
 func (*TopologyRequirement) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{13}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{13}
 }
 func (m *TopologyRequirement) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TopologyRequirement.Unmarshal(m, b)
@@ -1772,7 +1769,7 @@ func (m *Topology) Reset()         { *m = Topology{} }
 func (m *Topology) String() string { return proto.CompactTextString(m) }
 func (*Topology) ProtoMessage()    {}
 func (*Topology) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{14}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{14}
 }
 func (m *Topology) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Topology.Unmarshal(m, b)
@@ -1816,7 +1813,7 @@ func (m *DeleteVolumeRequest) Reset()         { *m = DeleteVolumeRequest{} }
 func (m *DeleteVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteVolumeRequest) ProtoMessage()    {}
 func (*DeleteVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{15}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{15}
 }
 func (m *DeleteVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteVolumeRequest.Unmarshal(m, b)
@@ -1860,7 +1857,7 @@ func (m *DeleteVolumeResponse) Reset()         { *m = DeleteVolumeResponse{} }
 func (m *DeleteVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteVolumeResponse) ProtoMessage()    {}
 func (*DeleteVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{16}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{16}
 }
 func (m *DeleteVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteVolumeResponse.Unmarshal(m, b)
@@ -1910,7 +1907,7 @@ func (m *ControllerPublishVolumeRequest) Reset()         { *m = ControllerPublis
 func (m *ControllerPublishVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*ControllerPublishVolumeRequest) ProtoMessage()    {}
 func (*ControllerPublishVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{17}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{17}
 }
 func (m *ControllerPublishVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerPublishVolumeRequest.Unmarshal(m, b)
@@ -1987,7 +1984,7 @@ func (m *ControllerPublishVolumeResponse) Reset()         { *m = ControllerPubli
 func (m *ControllerPublishVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*ControllerPublishVolumeResponse) ProtoMessage()    {}
 func (*ControllerPublishVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{18}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{18}
 }
 func (m *ControllerPublishVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerPublishVolumeResponse.Unmarshal(m, b)
@@ -2038,7 +2035,7 @@ func (m *ControllerUnpublishVolumeRequest) Reset()         { *m = ControllerUnpu
 func (m *ControllerUnpublishVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*ControllerUnpublishVolumeRequest) ProtoMessage()    {}
 func (*ControllerUnpublishVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{19}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{19}
 }
 func (m *ControllerUnpublishVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerUnpublishVolumeRequest.Unmarshal(m, b)
@@ -2089,7 +2086,7 @@ func (m *ControllerUnpublishVolumeResponse) Reset()         { *m = ControllerUnp
 func (m *ControllerUnpublishVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*ControllerUnpublishVolumeResponse) ProtoMessage()    {}
 func (*ControllerUnpublishVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{20}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{20}
 }
 func (m *ControllerUnpublishVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerUnpublishVolumeResponse.Unmarshal(m, b)
@@ -2135,7 +2132,7 @@ func (m *ValidateVolumeCapabilitiesRequest) Reset()         { *m = ValidateVolum
 func (m *ValidateVolumeCapabilitiesRequest) String() string { return proto.CompactTextString(m) }
 func (*ValidateVolumeCapabilitiesRequest) ProtoMessage()    {}
 func (*ValidateVolumeCapabilitiesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{21}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{21}
 }
 func (m *ValidateVolumeCapabilitiesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ValidateVolumeCapabilitiesRequest.Unmarshal(m, b)
@@ -2200,7 +2197,7 @@ func (m *ValidateVolumeCapabilitiesResponse) Reset()         { *m = ValidateVolu
 func (m *ValidateVolumeCapabilitiesResponse) String() string { return proto.CompactTextString(m) }
 func (*ValidateVolumeCapabilitiesResponse) ProtoMessage()    {}
 func (*ValidateVolumeCapabilitiesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{22}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{22}
 }
 func (m *ValidateVolumeCapabilitiesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ValidateVolumeCapabilitiesResponse.Unmarshal(m, b)
@@ -2258,7 +2255,7 @@ func (m *ListVolumesRequest) Reset()         { *m = ListVolumesRequest{} }
 func (m *ListVolumesRequest) String() string { return proto.CompactTextString(m) }
 func (*ListVolumesRequest) ProtoMessage()    {}
 func (*ListVolumesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{23}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{23}
 }
 func (m *ListVolumesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListVolumesRequest.Unmarshal(m, b)
@@ -2310,7 +2307,7 @@ func (m *ListVolumesResponse) Reset()         { *m = ListVolumesResponse{} }
 func (m *ListVolumesResponse) String() string { return proto.CompactTextString(m) }
 func (*ListVolumesResponse) ProtoMessage()    {}
 func (*ListVolumesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{24}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{24}
 }
 func (m *ListVolumesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListVolumesResponse.Unmarshal(m, b)
@@ -2355,7 +2352,7 @@ func (m *ListVolumesResponse_Entry) Reset()         { *m = ListVolumesResponse_E
 func (m *ListVolumesResponse_Entry) String() string { return proto.CompactTextString(m) }
 func (*ListVolumesResponse_Entry) ProtoMessage()    {}
 func (*ListVolumesResponse_Entry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{24, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{24, 0}
 }
 func (m *ListVolumesResponse_Entry) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListVolumesResponse_Entry.Unmarshal(m, b)
@@ -2410,7 +2407,7 @@ func (m *GetCapacityRequest) Reset()         { *m = GetCapacityRequest{} }
 func (m *GetCapacityRequest) String() string { return proto.CompactTextString(m) }
 func (*GetCapacityRequest) ProtoMessage()    {}
 func (*GetCapacityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{25}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{25}
 }
 func (m *GetCapacityRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetCapacityRequest.Unmarshal(m, b)
@@ -2468,7 +2465,7 @@ func (m *GetCapacityResponse) Reset()         { *m = GetCapacityResponse{} }
 func (m *GetCapacityResponse) String() string { return proto.CompactTextString(m) }
 func (*GetCapacityResponse) ProtoMessage()    {}
 func (*GetCapacityResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{26}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{26}
 }
 func (m *GetCapacityResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetCapacityResponse.Unmarshal(m, b)
@@ -2505,7 +2502,7 @@ func (m *ControllerGetCapabilitiesRequest) Reset()         { *m = ControllerGetC
 func (m *ControllerGetCapabilitiesRequest) String() string { return proto.CompactTextString(m) }
 func (*ControllerGetCapabilitiesRequest) ProtoMessage()    {}
 func (*ControllerGetCapabilitiesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{27}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{27}
 }
 func (m *ControllerGetCapabilitiesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerGetCapabilitiesRequest.Unmarshal(m, b)
@@ -2538,7 +2535,7 @@ func (m *ControllerGetCapabilitiesResponse) Reset()         { *m = ControllerGet
 func (m *ControllerGetCapabilitiesResponse) String() string { return proto.CompactTextString(m) }
 func (*ControllerGetCapabilitiesResponse) ProtoMessage()    {}
 func (*ControllerGetCapabilitiesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{28}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{28}
 }
 func (m *ControllerGetCapabilitiesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerGetCapabilitiesResponse.Unmarshal(m, b)
@@ -2579,7 +2576,7 @@ func (m *ControllerServiceCapability) Reset()         { *m = ControllerServiceCa
 func (m *ControllerServiceCapability) String() string { return proto.CompactTextString(m) }
 func (*ControllerServiceCapability) ProtoMessage()    {}
 func (*ControllerServiceCapability) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{29}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{29}
 }
 func (m *ControllerServiceCapability) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerServiceCapability.Unmarshal(m, b)
@@ -2689,7 +2686,7 @@ func (m *ControllerServiceCapability_RPC) Reset()         { *m = ControllerServi
 func (m *ControllerServiceCapability_RPC) String() string { return proto.CompactTextString(m) }
 func (*ControllerServiceCapability_RPC) ProtoMessage()    {}
 func (*ControllerServiceCapability_RPC) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{29, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{29, 0}
 }
 func (m *ControllerServiceCapability_RPC) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerServiceCapability_RPC.Unmarshal(m, b)
@@ -2747,7 +2744,7 @@ func (m *CreateSnapshotRequest) Reset()         { *m = CreateSnapshotRequest{} }
 func (m *CreateSnapshotRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateSnapshotRequest) ProtoMessage()    {}
 func (*CreateSnapshotRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{30}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{30}
 }
 func (m *CreateSnapshotRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateSnapshotRequest.Unmarshal(m, b)
@@ -2809,7 +2806,7 @@ func (m *CreateSnapshotResponse) Reset()         { *m = CreateSnapshotResponse{}
 func (m *CreateSnapshotResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateSnapshotResponse) ProtoMessage()    {}
 func (*CreateSnapshotResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{31}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{31}
 }
 func (m *CreateSnapshotResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateSnapshotResponse.Unmarshal(m, b)
@@ -2872,7 +2869,7 @@ func (m *Snapshot) Reset()         { *m = Snapshot{} }
 func (m *Snapshot) String() string { return proto.CompactTextString(m) }
 func (*Snapshot) ProtoMessage()    {}
 func (*Snapshot) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{32}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{32}
 }
 func (m *Snapshot) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Snapshot.Unmarshal(m, b)
@@ -2943,7 +2940,7 @@ func (m *SnapshotStatus) Reset()         { *m = SnapshotStatus{} }
 func (m *SnapshotStatus) String() string { return proto.CompactTextString(m) }
 func (*SnapshotStatus) ProtoMessage()    {}
 func (*SnapshotStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{33}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{33}
 }
 func (m *SnapshotStatus) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SnapshotStatus.Unmarshal(m, b)
@@ -2994,7 +2991,7 @@ func (m *DeleteSnapshotRequest) Reset()         { *m = DeleteSnapshotRequest{} }
 func (m *DeleteSnapshotRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteSnapshotRequest) ProtoMessage()    {}
 func (*DeleteSnapshotRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{34}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{34}
 }
 func (m *DeleteSnapshotRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteSnapshotRequest.Unmarshal(m, b)
@@ -3038,7 +3035,7 @@ func (m *DeleteSnapshotResponse) Reset()         { *m = DeleteSnapshotResponse{}
 func (m *DeleteSnapshotResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteSnapshotResponse) ProtoMessage()    {}
 func (*DeleteSnapshotResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{35}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{35}
 }
 func (m *DeleteSnapshotResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteSnapshotResponse.Unmarshal(m, b)
@@ -3092,7 +3089,7 @@ func (m *ListSnapshotsRequest) Reset()         { *m = ListSnapshotsRequest{} }
 func (m *ListSnapshotsRequest) String() string { return proto.CompactTextString(m) }
 func (*ListSnapshotsRequest) ProtoMessage()    {}
 func (*ListSnapshotsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{36}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{36}
 }
 func (m *ListSnapshotsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListSnapshotsRequest.Unmarshal(m, b)
@@ -3158,7 +3155,7 @@ func (m *ListSnapshotsResponse) Reset()         { *m = ListSnapshotsResponse{} }
 func (m *ListSnapshotsResponse) String() string { return proto.CompactTextString(m) }
 func (*ListSnapshotsResponse) ProtoMessage()    {}
 func (*ListSnapshotsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{37}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{37}
 }
 func (m *ListSnapshotsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListSnapshotsResponse.Unmarshal(m, b)
@@ -3203,7 +3200,7 @@ func (m *ListSnapshotsResponse_Entry) Reset()         { *m = ListSnapshotsRespon
 func (m *ListSnapshotsResponse_Entry) String() string { return proto.CompactTextString(m) }
 func (*ListSnapshotsResponse_Entry) ProtoMessage()    {}
 func (*ListSnapshotsResponse_Entry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{37, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{37, 0}
 }
 func (m *ListSnapshotsResponse_Entry) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListSnapshotsResponse_Entry.Unmarshal(m, b)
@@ -3233,8 +3230,8 @@ func (m *ListSnapshotsResponse_Entry) GetSnapshot() *Snapshot {
 type ControllerExpandVolumeRequest struct {
 	// The ID of the volume to expand. This field is REQUIRED.
 	VolumeId string `protobuf:"bytes,1,opt,name=volume_id,json=volumeId" json:"volume_id,omitempty"`
-	// This field is REQUIRED. This allows CO to specify the
-	// capacity requirements of the volume after expansion.
+	// This allows CO to specify the capacity requirements of the volume
+	// after expansion. This field is REQUIRED.
 	CapacityRange *CapacityRange `protobuf:"bytes,2,opt,name=capacity_range,json=capacityRange" json:"capacity_range,omitempty"`
 	// Secrets required by the plugin for expanding the volume.
 	// This field is OPTIONAL.
@@ -3248,7 +3245,7 @@ func (m *ControllerExpandVolumeRequest) Reset()         { *m = ControllerExpandV
 func (m *ControllerExpandVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*ControllerExpandVolumeRequest) ProtoMessage()    {}
 func (*ControllerExpandVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{38}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{38}
 }
 func (m *ControllerExpandVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerExpandVolumeRequest.Unmarshal(m, b)
@@ -3290,12 +3287,11 @@ func (m *ControllerExpandVolumeRequest) GetControllerExpandVolumeSecrets() map[s
 }
 
 type ControllerExpandVolumeResponse struct {
-	// Capacity of volume after expansion.
-	// This field is REQUIRED.
+	// Capacity of volume after expansion. This field is REQUIRED.
 	CapacityBytes int64 `protobuf:"varint,1,opt,name=capacity_bytes,json=capacityBytes" json:"capacity_bytes,omitempty"`
-	// Whether file system expansion is required for the volume.
-	// When true the CO MUST make NodeExpandVolume RPC call
-	// on the node. This field is REQUIRED.
+	// Whether file system expansion is required for the volume. When true
+	// the CO MUST make NodeExpandVolume RPC call on the node. This field
+	// is REQUIRED.
 	FsResizeRequired     bool     `protobuf:"varint,2,opt,name=fs_resize_required,json=fsResizeRequired" json:"fs_resize_required,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -3306,7 +3302,7 @@ func (m *ControllerExpandVolumeResponse) Reset()         { *m = ControllerExpand
 func (m *ControllerExpandVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*ControllerExpandVolumeResponse) ProtoMessage()    {}
 func (*ControllerExpandVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{39}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{39}
 }
 func (m *ControllerExpandVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControllerExpandVolumeResponse.Unmarshal(m, b)
@@ -3375,7 +3371,7 @@ func (m *NodeStageVolumeRequest) Reset()         { *m = NodeStageVolumeRequest{}
 func (m *NodeStageVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*NodeStageVolumeRequest) ProtoMessage()    {}
 func (*NodeStageVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{40}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{40}
 }
 func (m *NodeStageVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeStageVolumeRequest.Unmarshal(m, b)
@@ -3447,7 +3443,7 @@ func (m *NodeStageVolumeResponse) Reset()         { *m = NodeStageVolumeResponse
 func (m *NodeStageVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*NodeStageVolumeResponse) ProtoMessage()    {}
 func (*NodeStageVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{41}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{41}
 }
 func (m *NodeStageVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeStageVolumeResponse.Unmarshal(m, b)
@@ -3483,7 +3479,7 @@ func (m *NodeUnstageVolumeRequest) Reset()         { *m = NodeUnstageVolumeReque
 func (m *NodeUnstageVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*NodeUnstageVolumeRequest) ProtoMessage()    {}
 func (*NodeUnstageVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{42}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{42}
 }
 func (m *NodeUnstageVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeUnstageVolumeRequest.Unmarshal(m, b)
@@ -3527,7 +3523,7 @@ func (m *NodeUnstageVolumeResponse) Reset()         { *m = NodeUnstageVolumeResp
 func (m *NodeUnstageVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*NodeUnstageVolumeResponse) ProtoMessage()    {}
 func (*NodeUnstageVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{43}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{43}
 }
 func (m *NodeUnstageVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeUnstageVolumeResponse.Unmarshal(m, b)
@@ -3593,7 +3589,7 @@ func (m *NodePublishVolumeRequest) Reset()         { *m = NodePublishVolumeReque
 func (m *NodePublishVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*NodePublishVolumeRequest) ProtoMessage()    {}
 func (*NodePublishVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{44}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{44}
 }
 func (m *NodePublishVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodePublishVolumeRequest.Unmarshal(m, b)
@@ -3679,7 +3675,7 @@ func (m *NodePublishVolumeResponse) Reset()         { *m = NodePublishVolumeResp
 func (m *NodePublishVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*NodePublishVolumeResponse) ProtoMessage()    {}
 func (*NodePublishVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{45}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{45}
 }
 func (m *NodePublishVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodePublishVolumeResponse.Unmarshal(m, b)
@@ -3715,7 +3711,7 @@ func (m *NodeUnpublishVolumeRequest) Reset()         { *m = NodeUnpublishVolumeR
 func (m *NodeUnpublishVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*NodeUnpublishVolumeRequest) ProtoMessage()    {}
 func (*NodeUnpublishVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{46}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{46}
 }
 func (m *NodeUnpublishVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeUnpublishVolumeRequest.Unmarshal(m, b)
@@ -3759,7 +3755,7 @@ func (m *NodeUnpublishVolumeResponse) Reset()         { *m = NodeUnpublishVolume
 func (m *NodeUnpublishVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*NodeUnpublishVolumeResponse) ProtoMessage()    {}
 func (*NodeUnpublishVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{47}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{47}
 }
 func (m *NodeUnpublishVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeUnpublishVolumeResponse.Unmarshal(m, b)
@@ -3797,7 +3793,7 @@ func (m *NodeGetVolumeStatsRequest) Reset()         { *m = NodeGetVolumeStatsReq
 func (m *NodeGetVolumeStatsRequest) String() string { return proto.CompactTextString(m) }
 func (*NodeGetVolumeStatsRequest) ProtoMessage()    {}
 func (*NodeGetVolumeStatsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{48}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{48}
 }
 func (m *NodeGetVolumeStatsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeGetVolumeStatsRequest.Unmarshal(m, b)
@@ -3843,7 +3839,7 @@ func (m *NodeGetVolumeStatsResponse) Reset()         { *m = NodeGetVolumeStatsRe
 func (m *NodeGetVolumeStatsResponse) String() string { return proto.CompactTextString(m) }
 func (*NodeGetVolumeStatsResponse) ProtoMessage()    {}
 func (*NodeGetVolumeStatsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{49}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{49}
 }
 func (m *NodeGetVolumeStatsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeGetVolumeStatsResponse.Unmarshal(m, b)
@@ -3891,7 +3887,7 @@ func (m *VolumeUsage) Reset()         { *m = VolumeUsage{} }
 func (m *VolumeUsage) String() string { return proto.CompactTextString(m) }
 func (*VolumeUsage) ProtoMessage()    {}
 func (*VolumeUsage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{50}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{50}
 }
 func (m *VolumeUsage) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_VolumeUsage.Unmarshal(m, b)
@@ -3949,7 +3945,7 @@ func (m *NodeGetIdRequest) Reset()         { *m = NodeGetIdRequest{} }
 func (m *NodeGetIdRequest) String() string { return proto.CompactTextString(m) }
 func (*NodeGetIdRequest) ProtoMessage()    {}
 func (*NodeGetIdRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{51}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{51}
 }
 func (m *NodeGetIdRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeGetIdRequest.Unmarshal(m, b)
@@ -3983,7 +3979,7 @@ func (m *NodeGetIdResponse) Reset()         { *m = NodeGetIdResponse{} }
 func (m *NodeGetIdResponse) String() string { return proto.CompactTextString(m) }
 func (*NodeGetIdResponse) ProtoMessage()    {}
 func (*NodeGetIdResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{52}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{52}
 }
 func (m *NodeGetIdResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeGetIdResponse.Unmarshal(m, b)
@@ -4020,7 +4016,7 @@ func (m *NodeGetCapabilitiesRequest) Reset()         { *m = NodeGetCapabilitiesR
 func (m *NodeGetCapabilitiesRequest) String() string { return proto.CompactTextString(m) }
 func (*NodeGetCapabilitiesRequest) ProtoMessage()    {}
 func (*NodeGetCapabilitiesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{53}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{53}
 }
 func (m *NodeGetCapabilitiesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeGetCapabilitiesRequest.Unmarshal(m, b)
@@ -4053,7 +4049,7 @@ func (m *NodeGetCapabilitiesResponse) Reset()         { *m = NodeGetCapabilities
 func (m *NodeGetCapabilitiesResponse) String() string { return proto.CompactTextString(m) }
 func (*NodeGetCapabilitiesResponse) ProtoMessage()    {}
 func (*NodeGetCapabilitiesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{54}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{54}
 }
 func (m *NodeGetCapabilitiesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeGetCapabilitiesResponse.Unmarshal(m, b)
@@ -4094,7 +4090,7 @@ func (m *NodeServiceCapability) Reset()         { *m = NodeServiceCapability{} }
 func (m *NodeServiceCapability) String() string { return proto.CompactTextString(m) }
 func (*NodeServiceCapability) ProtoMessage()    {}
 func (*NodeServiceCapability) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{55}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{55}
 }
 func (m *NodeServiceCapability) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeServiceCapability.Unmarshal(m, b)
@@ -4204,7 +4200,7 @@ func (m *NodeServiceCapability_RPC) Reset()         { *m = NodeServiceCapability
 func (m *NodeServiceCapability_RPC) String() string { return proto.CompactTextString(m) }
 func (*NodeServiceCapability_RPC) ProtoMessage()    {}
 func (*NodeServiceCapability_RPC) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{55, 0}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{55, 0}
 }
 func (m *NodeServiceCapability_RPC) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeServiceCapability_RPC.Unmarshal(m, b)
@@ -4241,7 +4237,7 @@ func (m *NodeGetInfoRequest) Reset()         { *m = NodeGetInfoRequest{} }
 func (m *NodeGetInfoRequest) String() string { return proto.CompactTextString(m) }
 func (*NodeGetInfoRequest) ProtoMessage()    {}
 func (*NodeGetInfoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{56}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{56}
 }
 func (m *NodeGetInfoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeGetInfoRequest.Unmarshal(m, b)
@@ -4299,7 +4295,7 @@ func (m *NodeGetInfoResponse) Reset()         { *m = NodeGetInfoResponse{} }
 func (m *NodeGetInfoResponse) String() string { return proto.CompactTextString(m) }
 func (*NodeGetInfoResponse) ProtoMessage()    {}
 func (*NodeGetInfoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{57}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{57}
 }
 func (m *NodeGetInfoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeGetInfoResponse.Unmarshal(m, b)
@@ -4343,13 +4339,11 @@ func (m *NodeGetInfoResponse) GetAccessibleTopology() *Topology {
 type NodeExpandVolumeRequest struct {
 	// The ID of the volume. This field is REQUIRED.
 	VolumeId string `protobuf:"bytes,1,opt,name=volume_id,json=volumeId" json:"volume_id,omitempty"`
-	// The path on which volume is available.
-	// This field is REQUIRED.
+	// The path on which volume is available. This field is REQUIRED.
 	VolumePath string `protobuf:"bytes,2,opt,name=volume_path,json=volumePath" json:"volume_path,omitempty"`
-	// This field is OPTIONAL. This allows CO to specify the
-	// capacity requirements of the volume after expansion.
-	// If omitted the volume will be expanded to maximum available
-	// size.
+	// This allows CO to specify the capacity requirements of the volume
+	// after expansion. If omitted the volume will be expanded to maximum
+	// available size. This field is OPTIONAL.
 	CapacityRange        *CapacityRange `protobuf:"bytes,3,opt,name=capacity_range,json=capacityRange" json:"capacity_range,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
@@ -4360,7 +4354,7 @@ func (m *NodeExpandVolumeRequest) Reset()         { *m = NodeExpandVolumeRequest
 func (m *NodeExpandVolumeRequest) String() string { return proto.CompactTextString(m) }
 func (*NodeExpandVolumeRequest) ProtoMessage()    {}
 func (*NodeExpandVolumeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{58}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{58}
 }
 func (m *NodeExpandVolumeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeExpandVolumeRequest.Unmarshal(m, b)
@@ -4402,8 +4396,7 @@ func (m *NodeExpandVolumeRequest) GetCapacityRange() *CapacityRange {
 }
 
 type NodeExpandVolumeResponse struct {
-	// The capacity of the volume in bytes.
-	// This field is OPTIONAL.
+	// The capacity of the volume in bytes. This field is OPTIONAL.
 	CapacityBytes        int64    `protobuf:"varint,1,opt,name=capacity_bytes,json=capacityBytes" json:"capacity_bytes,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -4414,7 +4407,7 @@ func (m *NodeExpandVolumeResponse) Reset()         { *m = NodeExpandVolumeRespon
 func (m *NodeExpandVolumeResponse) String() string { return proto.CompactTextString(m) }
 func (*NodeExpandVolumeResponse) ProtoMessage()    {}
 func (*NodeExpandVolumeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_csi_aa65aae7a2e57982, []int{59}
+	return fileDescriptor_csi_250a543f0ce18d5c, []int{59}
 }
 func (m *NodeExpandVolumeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NodeExpandVolumeResponse.Unmarshal(m, b)
@@ -5450,10 +5443,10 @@ var _Node_serviceDesc = grpc.ServiceDesc{
 }
 
 func init() {
-	proto.RegisterFile("github.com/container-storage-interface/spec/csi.proto", fileDescriptor_csi_aa65aae7a2e57982)
+	proto.RegisterFile("github.com/container-storage-interface/spec/csi.proto", fileDescriptor_csi_250a543f0ce18d5c)
 }
 
-var fileDescriptor_csi_aa65aae7a2e57982 = []byte{
+var fileDescriptor_csi_250a543f0ce18d5c = []byte{
 	// 3344 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x5a, 0xcf, 0x73, 0xdb, 0xc6,
 	0xf5, 0x17, 0xf8, 0x4b, 0xd2, 0x93, 0x25, 0xd3, 0xab, 0x1f, 0xa6, 0x21, 0xc9, 0x96, 0xe1, 0xd8,
